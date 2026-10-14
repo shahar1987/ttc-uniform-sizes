@@ -61,12 +61,21 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--ball);outline-o
 .sum dt{color:var(--muted)}.sum dd{margin:0;font-weight:700}
 .again{background:none;border:2px solid var(--line);color:var(--ink);border-radius:12px;padding:12px 22px;font:600 17px var(--body);cursor:pointer}
 footer{text-align:center;color:var(--muted);font-size:14px;margin-top:20px}
+.coachbtn{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));z-index:2;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:6px 14px;font:600 15px var(--body);cursor:pointer}
+.band{position:relative}
+.keypad{display:grid;grid-template-columns:repeat(3,76px);gap:10px;justify-content:center}
+.keypad button{height:62px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:700 24px var(--display);cursor:pointer}
+.dots{text-align:center;font-size:30px;letter-spacing:12px;min-height:40px}
+.adminbtn{display:flex;align-items:center;justify-content:center;min-height:60px;border-radius:14px;font:700 20px var(--display);text-decoration:none;width:100%}
+.adminbtn.main{background:var(--court);color:var(--court-ink)}
+.adminbtn.alt{border:2px solid var(--line);color:var(--ink)}
+.link{background:none;border:0;color:var(--court);font:600 17px var(--body);cursor:pointer;text-decoration:underline;align-self:center}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:no-preference){.done .ballmark{animation:bounce .9s ease-out 1}@keyframes bounce{0%{transform:translateY(-34px)}60%{transform:translateY(0)}80%{transform:translateY(-9px)}100%{transform:translateY(0)}}}
 </style>
 </head>
 <body>
-<header class="band"><div class="band-in">
+<header class="band"><button class="coachbtn" id="coachBtn" type="button">מאמן</button><div class="band-in">
   <div class="club">מועדון טניס שולחן מבואות החרמון ע"ש רוני גלבוע</div>
   <h1>מידות לתלבושת הליגה</h1>
   <p class="lead">השנה כל שחקני הליגה מקבלים חולצה ומכנס של המועדון. ממלאים פעם אחת, לוקח דקה.</p>
@@ -104,6 +113,23 @@ footer{text-align:center;color:var(--muted);font-size:14px;margin-top:20px}
     <h2>תודה, קיבלנו!</h2>
     <dl class="sum" id="sum"></dl>
     <button class="again" id="again" type="button">מילוי לשחקן נוסף</button>
+  </section>
+  <section class="card done" id="pinView" hidden>
+    <h2>כניסת מאמן</h2>
+    <p class="note">הקש את הקוד</p>
+    <div class="dots" id="pinDots" aria-live="polite"></div>
+    <div class="keypad" id="keypad"></div>
+    <p class="err" id="pinMsg" hidden style="margin:0">קוד שגוי</p>
+    <button class="link" type="button" data-home>חזרה לטופס</button>
+  </section>
+
+  <section class="card" id="adminView" hidden>
+    <h2 style="font-family:var(--display);margin:0">תשובות ההורים</h2>
+    <p class="note" style="font-size:16px">כל התשובות מרוכזות בטבלה מסודרת: סיכום כמויות להזמנה לפי מידה, רשימת שחקנים עם מי מילא ומי עוד לא, וכל התשובות כפי שנכתבו. הטבלה מתעדכנת אוטומטית כל שעתיים.</p>
+    <a class="adminbtn main" href="https://docs.google.com/spreadsheets/d/1ESzW-CmgDwREHuIJJzMcM5dB9WqOLMnZR9iKc3UvwX4/edit" target="_blank" rel="noopener">פתיחה בגוגל שיטס</a>
+    <a class="adminbtn alt" href="https://docs.google.com/spreadsheets/d/1ESzW-CmgDwREHuIJJzMcM5dB9WqOLMnZR9iKc3UvwX4/export?format=xlsx" target="_blank" rel="noopener">הורדה כקובץ אקסל</a>
+    <p class="note">הטבלה נפתחת רק מחשבון הגוגל של שחר.</p>
+    <button class="link" type="button" data-home>חזרה לטופס</button>
   </section>
   <footer>הפועל מבואות חרמון · עונת 2026–27</footer>
 </main>
@@ -154,6 +180,25 @@ $("f").addEventListener("submit", async e => {
     $("err").hidden = false;
   } finally { $("send").disabled = false; $("send").textContent = "שליחה"; }
 });
+
+// Coach entry. The code only hides the buttons; the sheet itself is private to the owner's Google account.
+const PIN = "1247";
+const views = ["f","done","pinView","adminView"];
+const show = v => { views.forEach(x => $(x).hidden = x !== v); window.scrollTo(0,0); };
+let pin = "";
+["1","2","3","4","5","6","7","8","9","","0","⌫"].forEach(k => {
+  const b = document.createElement("button"); b.type = "button"; b.textContent = k;
+  if (!k){ b.style.visibility = "hidden"; b.tabIndex = -1; }
+  b.onclick = () => {
+    $("pinMsg").hidden = true;
+    if (k === "⌫") pin = pin.slice(0,-1); else if (pin.length < 4) pin += k;
+    $("pinDots").textContent = "●".repeat(pin.length);
+    if (pin.length === 4){ const ok = pin === PIN; pin = ""; $("pinDots").textContent = ""; ok ? show("adminView") : ($("pinMsg").hidden = false); }
+  };
+  $("keypad").appendChild(b);
+});
+$("coachBtn").onclick = () => { pin = ""; $("pinDots").textContent = ""; $("pinMsg").hidden = true; show("pinView"); };
+document.querySelectorAll("[data-home]").forEach(b => b.onclick = () => show("f"));
 
 $("again").addEventListener("click", () => {
   $("f").reset(); pick.shirt = pick.pants = null;
