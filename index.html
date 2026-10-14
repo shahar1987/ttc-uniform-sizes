@@ -157,6 +157,8 @@ h1{font-weight:800;font-size:clamp(32px,9vw,44px);line-height:1.05;letter-spacin
 .row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);min-height:56px}
 .row:first-child{border-top:0}
 .row .nm{flex:1;min-width:0}
+.idx{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid var(--line-strong);display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.arow .idx{order:-1}
 .row .nm b{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .nm small{color:var(--muted);font-size:13px}
 .chip{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;padding:0 10px;border:1px solid var(--line-strong);border-radius:9px;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;background:#fff}
@@ -514,7 +516,7 @@ const PAGE = "https://shahar1987.github.io/ttc-uniform-sizes/";
 function compute(){
   const roster = window.ROSTER_DATA;
   const time = a => a.at && a.at.toMillis ? a.at.toMillis() : 0;
-  const rows = answers.map(a => {
+  const rows = answers.filter(a => window.UniformMatch.norm(a.first) !== "בדיקה").map(a => {   // self-test answers are kept out
     const auto = window.UniformMatch.matchName(a.first, a.last, roster);
     const player = a.player || auto.name;
     return {...a, player, suggestion: auto.suggestion, ms: time(a)};
@@ -539,7 +541,7 @@ function render(){
 
   const missingNames = d.status.filter(p => !p.ans).map(p => p.name);
   const msg = missingNames.length
-    ? `היי 🏓 עוד חסרות לנו מידות לתלבושת הליגה של: ${missingNames.join(", ")}.\nממלאים כאן, לוקח דקה: ${PAGE}`
+    ? `היי 🏓 עוד חסרות לנו מידות לתלבושת הליגה של:\n${missingNames.map((n, i) => `${i + 1}. ${n}`).join("\n")}\n\nממלאים כאן, לוקח דקה: ${PAGE}`
     : `תודה לכולם, קיבלנו את כל המידות לתלבושת! 🏓`;
   $("remind").href = "https://wa.me/?text=" + encodeURIComponent(msg);
 
@@ -556,7 +558,7 @@ function paneMissing(pane, d){
   const list = d.status.filter(p => !p.ans);
   head(pane, "עוד לא מילאו", list.length ? `${list.length} שחקנים` : "");
   if (!list.length){ pane.append(el("div","empty","כולם מילאו 🎉 אפשר להזמין.")); return; }
-  list.forEach(p => { const r = el("div","row"); const n = el("div","nm"); n.append(el("b",null,p.name), el("small",null,p.group)); r.append(n, el("span","badge no","חסר")); pane.append(r); });
+  list.forEach((p, i) => { const r = el("div","row"); r.append(el("span","idx",String(i + 1))); const n = el("div","nm"); n.append(el("b",null,p.name), el("small",null,p.group)); r.append(n, el("span","badge no","חסר")); pane.append(r); });
 }
 
 function paneAll(pane, d){
@@ -568,8 +570,8 @@ function paneAll(pane, d){
   function draw(){
     box.replaceChildren();
     const q = query.trim();
-    d.status.filter(p => !q || (p.name + " " + p.group).includes(q)).forEach(p => {
-      const r = el("div","row"); const n = el("div","nm"); n.append(el("b",null,p.name), el("small",null,p.group)); r.append(n);
+    d.status.map((p, i) => ({...p, no: i + 1})).filter(p => !q || (p.name + " " + p.group).includes(q)).forEach(p => {
+      const r = el("div","row"); r.append(el("span","idx",String(p.no))); const n = el("div","nm"); n.append(el("b",null,p.name), el("small",null,p.group)); r.append(n);
       if (p.ans){ r.append(el("span","chip",p.ans.shirt), el("span","chip",p.ans.pants)); }
       else r.append(el("span","badge no","עוד לא"));
       box.append(r);
@@ -599,10 +601,13 @@ function paneOrder(pane, d){
 function paneAnswers(pane, d){
   head(pane, "כל התשובות", "כפי שההורים כתבו");
   if (!d.rows.length){ pane.append(el("div","empty","עוד אין תשובות. כשהורה ימלא, זה יופיע כאן מיד.")); return; }
-  [...d.rows].reverse().forEach(a => {
+  [...d.rows].reverse().forEach((a, i, all) => {
     const r = el("div","row arow");
     const n = el("div","nm");
-    n.append(el("b",null,`${a.first} ${a.last}`), el("small",null,[fmtTime(a.ms), a.player ? "← " + a.player : "לא זוהה ברשימה"].filter(Boolean).join(" · ")));
+    n.style.display = "flex"; n.style.alignItems = "center"; n.style.gap = "12px";
+    const txt = el("div"); txt.style.minWidth = "0";
+    txt.append(el("b",null,`${a.first} ${a.last}`), el("small",null,[fmtTime(a.ms), a.player ? "← " + a.player : "לא זוהה ברשימה"].filter(Boolean).join(" · ")));
+    n.append(el("span","idx",String(all.length - i)), txt);
     const tools = el("div","tools");
     r.append(n, tools);
     tools.append(el("span","chip",a.shirt), el("span","chip",a.pants));
@@ -630,9 +635,12 @@ document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click"
 $("csv").addEventListener("click", () => {
   const d = compute();
   const q = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
-  const lines = [["שם","קבוצה","מילא","חולצה","מכנס","השם שנכתב","מתי"].map(q).join(",")];
-  d.status.forEach(p => lines.push([p.name, p.group, p.ans ? "כן" : "לא", p.ans?.shirt, p.ans?.pants, p.ans ? p.ans.first + " " + p.ans.last : "", p.ans ? fmtTime(p.ans.ms) : ""].map(q).join(",")));
-  d.unmatched.forEach(a => lines.push(["", "", "לא זוהה", a.shirt, a.pants, a.first + " " + a.last, fmtTime(a.ms)].map(q).join(",")));
+  const lines = [["מס'","שם","קבוצה","מילא","חולצה","מכנס","השם שנכתב","מתי"].map(q).join(",")];
+  d.status.forEach((p, i) => lines.push([i + 1, p.name, p.group, p.ans ? "כן" : "לא", p.ans?.shirt, p.ans?.pants, p.ans ? p.ans.first + " " + p.ans.last : "", p.ans ? fmtTime(p.ans.ms) : ""].map(q).join(",")));
+  d.unmatched.forEach(a => lines.push(["", "", "", "לא זוהה", a.shirt, a.pants, a.first + " " + a.last, fmtTime(a.ms)].map(q).join(",")));
+  const miss = d.status.filter(p => !p.ans);
+  lines.push("", [q("עוד לא מילאו (" + miss.length + ")")].join(","), ["מס'","שם","קבוצה"].map(q).join(","));
+  miss.forEach((p, i) => lines.push([i + 1, p.name, p.group].map(q).join(",")));
   const blob = new Blob(["﻿" + lines.join("\r\n")], {type: "text/csv;charset=utf-8"});
   const link = Object.assign(document.createElement("a"), {href: URL.createObjectURL(blob), download: "מידות-תלבושת-ליגה.csv"});
   document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(link.href), 2000);
