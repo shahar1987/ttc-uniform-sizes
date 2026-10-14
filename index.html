@@ -8,17 +8,17 @@
 <meta property="og:title" content="מידות לתלבושת הליגה 🏓">
 <meta property="og:description" content="מועדון טניס שולחן מבואות החרמון ע&quot;ש רוני גלבוע · ממלאים שם ומידות, וזהו.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#F2F3F7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light only">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23E8731A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap">
 <style>
-/* Grouped-list layout (iOS Settings style) on a court-blue / ball-orange palette. Springs via linear() with cubic fallbacks. */
+/* All-white, single light theme by request: white page, white cards outlined by hairlines, court-blue / ball-orange accents. */
 :root{
-  --bg:#F2F3F7; --card:#FFFFFF; --ink:#111A27; --muted:#6B7686; --sep:rgba(60,70,90,.14);
-  --court:#1D4E89; --court-ink:#FFFFFF; --ball:#E8731A; --ok:#1F8A4C; --no:#C2412F; --chip:#E9EDF3;
-  --glass:rgba(242,243,247,.72); --glass-edge:rgba(255,255,255,.6);
+  --bg:#FFFFFF; --card:#FFFFFF; --ink:#111A27; --muted:#6B7686; --sep:rgba(60,70,90,.12); --line:#E4E8EE;
+  --court:#1D4E89; --court-ink:#FFFFFF; --ball:#E8731A; --ok:#1F8A4C; --no:#C2412F; --chip:#F3F5F8;
+  --glass:rgba(255,255,255,.82); --glass-edge:#EEF1F5;
   --font:-apple-system,BlinkMacSystemFont,"Assistant","Segoe UI",system-ui,sans-serif;
   --ease:cubic-bezier(.2,.8,.2,1);
   --spring:cubic-bezier(.2,.8,.2,1);
@@ -26,10 +26,6 @@
   --bounce:linear(0,.18 6%,.55 13%,.9 21%,1.08 29%,1.12 34%,1.08 41%,1 51%,.98 60%,1 75%,1);
   color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root{
-  --bg:#000; --card:#16181D; --ink:#F2F4F8; --muted:#97A1B0; --sep:rgba(255,255,255,.12);
-  --court:#5B9BE8; --court-ink:#06101C; --ball:#F48A3C; --ok:#4CC27F; --no:#F0705C; --chip:#24272F;
-  --glass:rgba(10,11,14,.66); --glass-edge:rgba(255,255,255,.08); color-scheme:dark}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:400 17px/1.45 var(--font);min-height:100vh;-webkit-font-smoothing:antialiased}
@@ -58,7 +54,7 @@ h1{font-weight:800;font-size:clamp(32px,9vw,44px);line-height:1.05;letter-spacin
 .ghead{display:flex;align-items:baseline;justify-content:space-between;padding:0 6px 8px;font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.01em}
 .ghead .state{font-weight:600;color:var(--ok);opacity:0;transform:scale(.6);transition:opacity .2s,transform .35s var(--bounce)}
 .group.ok .ghead .state{opacity:1;transform:none}
-.card{background:var(--card);border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(17,26,39,.04),0 8px 24px rgba(17,26,39,.05)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(17,26,39,.03),0 10px 30px rgba(17,26,39,.05)}
 .field{display:flex;align-items:center;gap:12px;min-height:58px;padding:0 18px}
 .field + .field{border-top:1px solid var(--sep);margin-inline-start:18px;padding-inline-start:0}
 .field label{width:96px;flex:none;font-weight:600}
@@ -110,7 +106,7 @@ h1{font-weight:800;font-size:clamp(32px,9vw,44px);line-height:1.05;letter-spacin
 .check path{fill:none;stroke:#fff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;transition:stroke-dashoffset .4s var(--ease) .3s}
 .sheet.show .check circle{transform:scale(1)}
 .sheet.show .check path{stroke-dashoffset:0}
-.sum{background:var(--bg);border-radius:16px;padding:6px 16px;margin:0 0 18px}
+.sum{background:var(--chip);border-radius:16px;padding:6px 16px;margin:0 0 18px}
 .sum div{display:flex;justify-content:space-between;padding:11px 0;font-size:17px}
 .sum div + div{border-top:1px solid var(--sep)}
 .sum dt{color:var(--muted)}.sum dd{margin:0;font-weight:700}
@@ -218,7 +214,8 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
   <h2 id="adminTitle">תשובות ההורים</h2>
   <p>סיכום כמויות להזמנה, מי מילא ומי עוד לא, וכל התשובות כפי שנכתבו. מתעדכן אוטומטית כל שעתיים.</p>
   <div class="stack">
-    <a class="btn primary" href="https://docs.google.com/spreadsheets/d/1ESzW-CmgDwREHuIJJzMcM5dB9WqOLMnZR9iKc3UvwX4/edit" target="_blank" rel="noopener">פתיחה בגוגל שיטס</a>
+    <a class="btn primary" href="https://claude.ai/artifact/CvyKTxBWsbjZBDuSXv4kcp" target="_blank" rel="noopener">דשבורד מאמן</a>
+    <a class="btn soft" href="https://docs.google.com/spreadsheets/d/1ESzW-CmgDwREHuIJJzMcM5dB9WqOLMnZR9iKc3UvwX4/edit" target="_blank" rel="noopener">פתיחה בגוגל שיטס</a>
     <a class="btn soft" href="https://docs.google.com/spreadsheets/d/1ESzW-CmgDwREHuIJJzMcM5dB9WqOLMnZR9iKc3UvwX4/export?format=xlsx" target="_blank" rel="noopener">הורדה כקובץ אקסל</a>
   </div>
   <button class="close" type="button" data-close>סגירה</button>
