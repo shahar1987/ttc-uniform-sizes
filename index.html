@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מידות לתלבושת הליגה · טניס שולחן מבואות החרמון</title>
+<meta name="description" content="ממלאים את שם השחקן ואת מידות החולצה והמכנס. לוקח דקה.">
+<meta property="og:title" content="מידות לתלבושת הליגה 🏓">
+<meta property="og:description" content="מועדון טניס שולחן מבואות החרמון ע&quot;ש רוני גלבוע · ממלאים שם ומידות, וזהו.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1D4E89">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23E8731A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700&family=Assistant:wght@400;600;700&display=swap">
+<style>
+/* Same system as the Wingate camp page: court-blue band, white card, ball-orange accent, big tap targets */
+:root{
+  --bg:#EEF2F6; --surface:#FFFFFF; --ink:#13243A; --muted:#5B6B7F; --line:#D5DDE6;
+  --court:#1D4E89; --court-deep:#163E6E; --court-ink:#FFFFFF; --ball:#E8731A; --ok:#1F8A4C; --no:#B8412F; --soft:#E3EAF2;
+  --display:"Rubik","Assistant",system-ui,sans-serif; --body:"Assistant",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0F1722; --surface:#172231; --ink:#E7EDF5; --muted:#9AA9BB; --line:#2A3A4E;
+  --court:#4C8BD6; --court-deep:#16304F; --court-ink:#0B1420; --ball:#F08A3A; --ok:#46B475; --no:#E06A57; --soft:#1F2D3F; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.45;min-height:100vh}
+.band{background:var(--court-deep);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.band-in{max-width:620px;margin:0 auto;padding:28px max(20px,env(safe-area-inset-right,0px)) 72px max(20px,env(safe-area-inset-left,0px));position:relative;overflow:hidden}
+.band-in::after{content:"";position:absolute;width:120px;height:120px;border-radius:50%;background:var(--ball);left:-30px;top:-30px;opacity:.9}
+.club{font-size:15px;opacity:.85;position:relative;z-index:1}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,8vw,42px);line-height:1.1;margin:6px 0 8px;position:relative;z-index:1;text-wrap:balance}
+.lead{margin:0;font-size:18px;opacity:.92;position:relative;z-index:1;max-width:30ch}
+.wrap{max-width:620px;margin:-48px auto 0;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));position:relative}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 20px;display:flex;flex-direction:column;gap:26px;box-shadow:0 10px 30px rgba(19,36,58,.08)}
+.step{display:flex;flex-direction:column;gap:10px;border:0;margin:0;padding:0;min-width:0}
+.step-h{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:500;font-size:21px;padding:0}
+.step-h b{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--court);display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:380px){.names{grid-template-columns:1fr}}
+label.f{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:16px;color:var(--muted)}
+input[type=text]{width:100%;font:400 20px var(--body);padding:14px 14px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+input[type=text]:focus{border-color:var(--court)}
+.sizes{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media (max-width:420px){.sizes{grid-template-columns:repeat(4,1fr)}}
+.size{min-height:56px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:700 19px var(--display);cursor:pointer;font-variant-numeric:tabular-nums;padding:0 4px}
+.size:hover{border-color:var(--court)}
+.size[aria-pressed=true]{background:var(--court);border-color:var(--court);color:var(--court-ink)}
+.size.other{font-size:16px}
+.otherIn{margin-top:4px}
+.note{font-size:14px;color:var(--muted);margin:0}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ball);outline-offset:2px}
+.send{min-height:64px;border:0;border-radius:14px;background:var(--ball);color:#fff;font:700 22px var(--display);cursor:pointer;width:100%}
+.send[disabled]{opacity:.5;cursor:default}
+.err{color:var(--no);font-weight:600;margin:-12px 0 0}
+.done{text-align:center;align-items:center;padding-block:40px}
+.ballmark{width:72px;height:72px;border-radius:50%;background:var(--ball)}
+.done h2{font-family:var(--display);font-weight:700;font-size:28px;margin:0}
+.sum{display:grid;grid-template-columns:auto auto;gap:6px 20px;text-align:right;font-size:19px;margin:0;background:var(--bg);border-radius:12px;padding:14px 20px}
+.sum dt{color:var(--muted)}.sum dd{margin:0;font-weight:700}
+.again{background:none;border:2px solid var(--line);color:var(--ink);border-radius:12px;padding:12px 22px;font:600 17px var(--body);cursor:pointer}
+footer{text-align:center;color:var(--muted);font-size:14px;margin-top:20px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:no-preference){.done .ballmark{animation:bounce .9s ease-out 1}@keyframes bounce{0%{transform:translateY(-34px)}60%{transform:translateY(0)}80%{transform:translateY(-9px)}100%{transform:translateY(0)}}}
+</style>
+</head>
+<body>
+<header class="band"><div class="band-in">
+  <div class="club">מועדון טניס שולחן מבואות החרמון ע"ש רוני גלבוע</div>
+  <h1>מידות לתלבושת הליגה</h1>
+  <p class="lead">השנה כל שחקני הליגה מקבלים חולצה ומכנס של המועדון. ממלאים פעם אחת, לוקח דקה.</p>
+</div></header>
+
+<main class="wrap">
+  <form class="card" id="f" novalidate>
+    <fieldset class="step">
+      <legend class="step-h"><b>1</b>שם השחקן</legend>
+      <div class="names">
+        <label class="f">שם פרטי<input type="text" id="first" autocomplete="off" maxlength="40" required></label>
+        <label class="f">שם משפחה<input type="text" id="last" autocomplete="off" maxlength="40" required></label>
+      </div>
+    </fieldset>
+
+    <fieldset class="step">
+      <legend class="step-h"><b>2</b>מידת חולצה</legend>
+      <div class="sizes" data-k="shirt"></div>
+      <input class="otherIn" type="text" id="shirtOther" maxlength="20" placeholder="איזו מידה?" aria-label="מידת חולצה אחרת" hidden>
+    </fieldset>
+
+    <fieldset class="step">
+      <legend class="step-h"><b>3</b>מידת מכנס</legend>
+      <div class="sizes" data-k="pants"></div>
+      <input class="otherIn" type="text" id="pantsOther" maxlength="20" placeholder="איזו מידה?" aria-label="מידת מכנס אחרת" hidden>
+    </fieldset>
+
+    <p class="err" id="err" hidden></p>
+    <button class="send" id="send" type="submit">שליחה</button>
+    <p class="note">שאלות? שחר, 050-4999149</p>
+  </form>
+
+  <section class="card done" id="done" hidden aria-live="polite">
+    <div class="ballmark" aria-hidden="true"></div>
+    <h2>תודה, קיבלנו!</h2>
+    <dl class="sum" id="sum"></dl>
+    <button class="again" id="again" type="button">מילוי לשחקן נוסף</button>
+  </section>
+  <footer>הפועל מבואות חרמון · עונת 2026–27</footer>
+</main>
+
+<script>
+// Answers go straight into the club's Google Form (owner reads them in Drive).
+const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSc-ZfQ88s5y7a_7Kp4wlIaqqKke1uq3ZzlVLHtXSGdDxhg51A/formResponse";
+const E = {first:"entry.2019063221", last:"entry.2093153725", shirt:"entry.843044989", pants:"entry.18624866"};
+const SIZES = ["16","18","XS","S","M","L","XL","XXL","3XL"];
+const $ = id => document.getElementById(id);
+const pick = {shirt:null, pants:null};
+const clean = s => (s||"").trim().replace(/\s+/g," ");
+
+document.querySelectorAll(".sizes").forEach(box => {
+  const k = box.dataset.k;
+  box.innerHTML = SIZES.map(s => `<button type="button" class="size" aria-pressed="false" data-s="${s}">${s}</button>`).join("")
+    + `<button type="button" class="size other" aria-pressed="false" data-s="other">אחר</button>`;
+  box.addEventListener("click", e => {
+    const b = e.target.closest("[data-s]"); if (!b) return;
+    pick[k] = b.dataset.s;
+    box.querySelectorAll(".size").forEach(x => x.setAttribute("aria-pressed", x === b));
+    $(k+"Other").hidden = pick[k] !== "other";
+    if (pick[k] === "other") $(k+"Other").focus();
+    $("err").hidden = true;
+  });
+});
+const sizeOf = k => pick[k] === "other" ? clean($(k+"Other").value) : pick[k];
+
+$("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const first = clean($("first").value), last = clean($("last").value), shirt = sizeOf("shirt"), pants = sizeOf("pants");
+  const miss = [!first && "שם פרטי", !last && "שם משפחה", !shirt && "מידת חולצה", !pants && "מידת מכנס"].filter(Boolean);
+  if (miss.length){ $("err").textContent = "חסר: " + miss.join(", "); $("err").hidden = false; return; }
+  const body = new URLSearchParams();
+  body.append(E.first, first); body.append(E.last, last);
+  for (const k of ["shirt","pants"]){
+    if (pick[k] === "other"){ body.append(E[k], "__other_option__"); body.append(E[k]+".other_option_response", sizeOf(k)); }
+    else body.append(E[k], pick[k]);
+  }
+  $("send").disabled = true; $("send").textContent = "שולח…";
+  try {
+    await fetch(FORM, {method:"POST", mode:"no-cors", body}); // opaque response by design; a network failure still throws
+    const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+    $("sum").innerHTML = `<dt>שחקן</dt><dd>${esc(first+" "+last)}</dd><dt>חולצה</dt><dd>${esc(shirt)}</dd><dt>מכנס</dt><dd>${esc(pants)}</dd>`;
+    $("f").hidden = true; $("done").hidden = false; window.scrollTo(0,0);
+  } catch(err){
+    $("err").textContent = "השליחה לא עברה. בדקו שיש אינטרנט ונסו שוב.";
+    $("err").hidden = false;
+  } finally { $("send").disabled = false; $("send").textContent = "שליחה"; }
+});
+
+$("again").addEventListener("click", () => {
+  $("f").reset(); pick.shirt = pick.pants = null;
+  document.querySelectorAll(".size").forEach(x => x.setAttribute("aria-pressed","false"));
+  $("shirtOther").hidden = $("pantsOther").hidden = true;
+  $("done").hidden = true; $("f").hidden = false; $("first").focus();
+});
+</script>
+</body>
+</html>
