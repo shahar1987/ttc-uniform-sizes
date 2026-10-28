@@ -565,7 +565,13 @@ function compute(){
   return {rows, latest, unmatched, kept, status};
 }
 // coaches by name, so the view holds even when the roster comes from the saved Firestore copy
-const COACHES = ["שחר גילעד","תאו מורנו","דניאל בן ארי","דור נברו","לאוניד גימפלסון","טל כהן"];
+const COACHES = ["שחר גילעד","טאו מורנו","דניאל בן אהרון","דור נברו","לאוניד גימפלסון","טל כהן"];
+// exact name first, then the same fuzzy match the form uses (spelling drifts: תאו/טאו, ליאוניד/לאוניד)
+function findCoach(d, n){
+  const hit = d.status.find(p => p.name === n); if (hit) return hit;
+  const [f, ...l] = n.split(" "), m = window.UniformMatch.matchName(f, l.join(" "), d.status);
+  return d.status.find(p => p.name === m.name);
+}
 const SZ = ["16","18","XS","S","M","L","XL","XXL","3XL"];
 const fmtTime = ms => ms ? new Date(ms).toLocaleString("he-IL", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"}) : "";
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
@@ -632,7 +638,7 @@ function paneAll(pane, d){
 }
 
 function paneCoaches(pane, d){
-  const list = COACHES.map(n => d.status.find(p => p.name === n) || {name: n, group: "לא ברשימה", ans: null});
+  const list = COACHES.map(n => findCoach(d, n) || {name: n, group: "לא ברשימה", ans: null});
   const filled = list.filter(p => p.ans);
   head(pane, "מאמנים", `${filled.length} מתוך ${list.length} מילאו`);
   list.forEach((p, i) => {
