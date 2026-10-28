@@ -356,10 +356,10 @@ const E = {first:"entry.2019063221", last:"entry.2093153725", shirt:"entry.84304
 const SIZES = ["16","18","XS","S","M","L","XL","XXL","3XL"];
 const PIN = "1247"; // a door for the coach screen; the data itself needs the coach's sign-in
 const ROSTER = [
-  ["עדי לוי","ליגה לאומית"],["יבגני ג'וטובסקי","ליגה לאומית"],["אלעזר שנקר","ליגה לאומית"],["דניאל בן אהרון","ליגה לאומית"],
+  ["עדי לוי","ליגה לאומית"],["יבגני ג'וטובסקי","ליגה לאומית"],["אלעזר שנקר","ליגה לאומית"],["דניאל בן אהרון","ליגה לאומית · מאמן"],
   ["אביב לזר","ליגה א' (M4)"],["טל כהן","ליגה א' (M4) · מאמן"],["ישראל בן ארוש","ליגה א' (M4)"],["אוהד בן ארוש","ליגה א' (M4)"],
   ["אורי מוסנזון","ליגה א' (M5)"],["שגיא אלון","ליגה א' (M5)"],["אנדרי סטולבוב","ליגה א' (M5)"],["צור כהן","ליגה א' (M5)"],["אורי אשד","ליגה א' (M5)"],
-  ["שחר גילעד","מאמנים"],["דניאל בן ארי","מאמנים"],["דור נברו","מאמנים"],["תאו מורנו","מאמנים"],["לאוניד גימפלסון","מאמנים"]
+  ["שחר גילעד","מאמנים"],["דור נברו","מאמנים"],["טאו מורנו","מאמנים"],["ליאוניד גימפלסון","מאמנים"]
 ].map(([name, group]) => ({name, group}));
 const $ = id => document.getElementById(id);
 const clean = s => (s||"").trim().replace(/\s+/g," ");
@@ -565,7 +565,7 @@ function compute(){
   return {rows, latest, unmatched, kept, status};
 }
 // coaches by name, so the view holds even when the roster comes from the saved Firestore copy
-const COACHES = ["שחר גילעד","טאו מורנו","דניאל בן אהרון","דור נברו","לאוניד גימפלסון","טל כהן"];
+const COACHES = ["שחר גילעד","טאו מורנו","דניאל בן אהרון","דור נברו","ליאוניד גימפלסון","טל כהן"];
 // exact name first, then the same fuzzy match the form uses (spelling drifts: תאו/טאו, ליאוניד/לאוניד)
 function findCoach(d, n){
   const hit = d.status.find(p => p.name === n); if (hit) return hit;
