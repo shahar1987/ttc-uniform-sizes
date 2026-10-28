@@ -292,6 +292,7 @@ button:focus-visible,input:focus-visible,a:focus-visible,select:focus-visible{ou
     <div class="seg" role="tablist" style="margin-top:16px">
       <button role="tab" type="button" data-tab="missing" aria-selected="true">עוד לא מילאו<em id="cMissing">0</em></button>
       <button role="tab" type="button" data-tab="all" aria-selected="false">כל השחקנים<em id="cAll">0</em></button>
+      <button role="tab" type="button" data-tab="coaches" aria-selected="false">מאמנים<em id="cCoaches">0</em></button>
       <button role="tab" type="button" data-tab="order" aria-selected="false">כמה להזמין</button>
       <button role="tab" type="button" data-tab="answers" aria-selected="false">תשובות<em id="cAnswers">0</em></button>
     </div>
@@ -563,6 +564,8 @@ function compute(){
   const status = roster.map(p => ({...p, ans: latest.get(p.name) || null}));
   return {rows, latest, unmatched, kept, status};
 }
+// coaches by name, so the view holds even when the roster comes from the saved Firestore copy
+const COACHES = ["שחר גילעד","תאו מורנו","דניאל בן ארי","דור נברו","לאוניד גימפלסון","טל כהן"];
 const SZ = ["16","18","XS","S","M","L","XL","XXL","3XL"];
 const fmtTime = ms => ms ? new Date(ms).toLocaleString("he-IL", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"}) : "";
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
@@ -573,6 +576,7 @@ function render(){
   $("tFilled").textContent = filled; $("tLeft").textContent = total - filled; $("tTotal").textContent = total;
   $("meter").style.width = (total ? filled / total * 100 : 0) + "%";
   $("cMissing").textContent = total - filled; $("cAll").textContent = total; $("cAnswers").textContent = d.rows.length;
+  $("cCoaches").textContent = COACHES.length;
 
   const missingNames = d.status.filter(p => !p.ans).map(p => p.name);
   const msg = missingNames.length
@@ -583,6 +587,7 @@ function render(){
   const pane = $("pane"); pane.replaceChildren(); pane.style.animation = "none"; void pane.offsetWidth; pane.style.animation = "";
   if (tab === "missing") paneMissing(pane, d);
   if (tab === "all") paneAll(pane, d);
+  if (tab === "coaches") paneCoaches(pane, d);
   if (tab === "order") paneOrder(pane, d);
   if (tab === "answers") paneAnswers(pane, d);
 }
@@ -626,10 +631,24 @@ function paneAll(pane, d){
   draw();
 }
 
-function paneOrder(pane, d){
-  head(pane, "כמה להזמין", `לפי ${d.kept.length} תשובות`);
-  const count = (k, s) => d.kept.filter(r => String(r[k]) === s).length;
-  const others = k => d.kept.filter(r => r[k] && !SZ.includes(String(r[k]))).map(r => r[k]);
+function paneCoaches(pane, d){
+  const list = COACHES.map(n => d.status.find(p => p.name === n) || {name: n, group: "לא ברשימה", ans: null});
+  const filled = list.filter(p => p.ans);
+  head(pane, "מאמנים", `${filled.length} מתוך ${list.length} מילאו`);
+  list.forEach((p, i) => {
+    const r = p.group === "לא ברשימה" ? el("div","row") : tapRow(p);
+    r.append(el("span","idx",String(i + 1))); const n = el("div","nm"); n.append(el("b",null,p.name), el("small",null,p.group)); r.append(n);
+    if (p.ans) r.append(el("span","chip",p.ans.shirt || "—"), el("span","chip",p.ans.pants || "—"));
+    else r.append(el("span","badge no","עוד לא"));
+    pane.append(r);
+  });
+  if (filled.length) paneOrder(pane, d, filled.map(p => p.ans), "כמה להזמין למאמנים");
+}
+
+function paneOrder(pane, d, kept = d.kept, title = "כמה להזמין"){
+  head(pane, title, `לפי ${kept.length} תשובות`);
+  const count = (k, s) => kept.filter(r => String(r[k]) === s).length;
+  const others = k => kept.filter(r => r[k] && !SZ.includes(String(r[k]))).map(r => r[k]);
   const lines = SZ.map(s => [s, count("shirt", s), count("pants", s)]);
   const oS = others("shirt"), oP = others("pants");
   if (oS.length || oP.length) lines.push(["אחר", oS.length, oP.length]);
